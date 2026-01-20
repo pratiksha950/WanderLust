@@ -44,7 +44,6 @@ const listingSchema = new Schema({
     },
     url: {
       type: String,
-      required: true,
     },
   },
 
