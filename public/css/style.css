@@ -76,7 +76,7 @@ body{
     text-decoration: none;
 }
 
-/* //card effect */
+/* card effect */
 .card-img-overlay{
     opacity: 0;
 }
@@ -85,7 +85,14 @@ body{
     background-color: white;
 }
 
+/* New Page */
 .add-btn{
+     background-color: #fe424d !important;
+     border: none !important;
+}
+
+/* Edit Page */
+.edit-btn{
      background-color: #fe424d !important;
      border: none !important;
 }
