@@ -9,6 +9,7 @@ const ejsMate=require("ejs-mate");
 const MONGO_URL="mongodb://127.0.0.1:27017/WanderLust";
 const wrapAsync=require("./utils/wrapAsync.js")
 const ExpressError=require("./utils/ExpressError.js")
+const {listingSchema}=require("./schema.js")//joi
 
 
 main().then(()=>{
@@ -28,7 +29,7 @@ app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
 //for useues of static file basically css
 app.use(express.static(path.join(__dirname,"public")))
-app.use(express.json());   // ✅ ADD THIS
+app.use(express.json());   
 
 
 
@@ -52,8 +53,13 @@ app.get("/listings/:id",wrapAsync(async (req,res)=>{
 
 //create Route
 app.post("/listings", wrapAsync(async (req,res,next)=>{
-    if (!req.body || !req.body.listing) {
-        throw new ExpressError(400, "Send valid data for listing");
+    let result=listingSchema.validate(req.body);
+    console.log(result);
+    // if (!req.body || !req.body.listing) {
+    //     throw new ExpressError(400, "Send valid data for listing");
+    // }
+    if(result.error){
+        throw new ExpressError(400,result.error)
     }
     const newListing=new Listing(req.body.listing);
     await newListing.save();
