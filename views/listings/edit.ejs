@@ -20,7 +20,7 @@
     <div class="mb-3">
       <label for="image" class="form-label">Current Image</label><br>
       <img src="<%= listing.image.url %>" alt="Listing Image" class="img-fluid mb-2" style="max-height: 200px;">
-      <input name="listing[image][url]" value="<%= listing.image.url %>" type="text" class="form-control">
+      <input name="listing[image][url]" value="<%= listing.image.url %>" type="text" class="form-control" required>
     </div>
 
         <div class="row">
