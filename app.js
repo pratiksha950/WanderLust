@@ -31,7 +31,22 @@ app.engine("ejs",ejsMate);
 app.use(express.static(path.join(__dirname,"public")))
 app.use(express.json());   
 
+app.get("/",(req,res)=>{
+    res.send("Hii i am Root")
+})
 
+const validateListing=(req,res,next)=>{
+    let {error}=listingSchema.validate(req.body);
+    if(error){
+        let errMsg=error.datails.map((el)=>{
+            el.message.join(",")
+        })
+        throw new ExpressError(400,errMsg)
+    }else{
+        next()
+    }
+
+}
 
 //index routev completed
 app.get("/listings",wrapAsync(async(req,res)=>{
@@ -52,15 +67,7 @@ app.get("/listings/:id",wrapAsync(async (req,res)=>{
 }))
 
 //create Route
-app.post("/listings", wrapAsync(async (req,res,next)=>{
-    let result=listingSchema.validate(req.body);
-    console.log(result);
-    // if (!req.body || !req.body.listing) {
-    //     throw new ExpressError(400, "Send valid data for listing");
-    // }
-    if(result.error){
-        throw new ExpressError(400,result.error)
-    }
+app.post("/listings",validateListing, wrapAsync(async (req,res,next)=>{
     const newListing=new Listing(req.body.listing);
     await newListing.save();
     res.redirect("/listings")
@@ -74,10 +81,7 @@ app.get("/listings/:id/edit",wrapAsync(async(req,res)=>{
 }))
 
 //update Route
-app.put("/listings/:id",wrapAsync(async(req,res)=>{
-    if (!req.body || !req.body.listing) {
-    throw new ExpressError(400, "Send valid data for listing");
-}
+app.put("/listings/:id",validateListing,wrapAsync(async(req,res)=>{
     let {id}=req.params;
     await Listing.findByIdAndUpdate(id,{...req.body.listing})
     res.redirect(`/listings/${id}`)
@@ -115,9 +119,6 @@ app.use((err,req,res,next)=>{
         res.status(statusCode).render("error.ejs",{message})
 })
 
-app.get("/",(req,res)=>{
-    res.send("Hii i am Root")
-})
 
 app.listen(8080,()=>{
     console.log("server is listening to port 8080");
