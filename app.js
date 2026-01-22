@@ -28,6 +28,8 @@ app.use(methodOverride("_method"));
 app.engine("ejs",ejsMate);
 //for useues of static file basically css
 app.use(express.static(path.join(__dirname,"public")))
+app.use(express.json());   // ✅ ADD THIS
+
 
 
 //index routev completed
@@ -50,14 +52,12 @@ app.get("/listings/:id",wrapAsync(async (req,res)=>{
 
 //create Route
 app.post("/listings", wrapAsync(async (req,res,next)=>{
-    if(!req.body.listing){
-        throw new ExpressError(400,"Send valid data for listing")
+    if (!req.body || !req.body.listing) {
+        throw new ExpressError(400, "Send valid data for listing");
     }
     const newListing=new Listing(req.body.listing);
     await newListing.save();
     res.redirect("/listings")
-        next(err)
-    
 }))
 
 //Edit Route
@@ -69,6 +69,9 @@ app.get("/listings/:id/edit",wrapAsync(async(req,res)=>{
 
 //update Route
 app.put("/listings/:id",wrapAsync(async(req,res)=>{
+    if (!req.body || !req.body.listing) {
+    throw new ExpressError(400, "Send valid data for listing");
+}
     let {id}=req.params;
     await Listing.findByIdAndUpdate(id,{...req.body.listing})
     res.redirect(`/listings/${id}`)
@@ -102,14 +105,15 @@ app.use((req, res, next) => {
 //midllware handle error
 app.use((err,req,res,next)=>{
     let {statusCode=500,message="something went wrong"}=err;
-        res.status(statusCode).send(message);
-})
-
-
-app.listen(8080,()=>{
-    console.log("server is listening to port 8080");
+        // res.status(statusCode).send(message);
+        res.status(statusCode).render("error.ejs",{message})
 })
 
 app.get("/",(req,res)=>{
     res.send("Hii i am Root")
 })
+
+app.listen(8080,()=>{
+    console.log("server is listening to port 8080");
+})
+
