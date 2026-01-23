@@ -10,7 +10,7 @@ const Review =require("./models/review.js");
 const MONGO_URL="mongodb://127.0.0.1:27017/WanderLust";
 const wrapAsync=require("./utils/wrapAsync.js")
 const ExpressError=require("./utils/ExpressError.js")
-const {listingSchema}=require("./schema.js")//joi
+const {listingSchema,reviewSchema}=require("./schema.js")//joi
 
 
 main().then(()=>{
@@ -39,16 +39,29 @@ app.get("/",(req,res)=>{
 const validateListing = (req, res, next) => {
     const { error } = listingSchema.validate(req.body, { abortEarly: false });
 
-    // Add safety check
     if (error && error.details) {
         const errMsg = error.details.map(el => el.message).join(", ");
-        throw new ExpressError(400, errMsg || "Invalid Listing Data");
+        throw new ExpressError(400, errMsg || "Invalid Listing  Data");
     } else if (error) {
         throw new ExpressError(400, "Invalid Listing Data");
     } else {
         next();
     }
 };
+
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body, { abortEarly: false });
+
+    if (error && error.details) {
+        const errMsg = error.details.map(el => el.message).join(", ");
+        throw new ExpressError(400, errMsg || "Invalid review Data");
+    } else if (error) {
+        throw new ExpressError(400, "Invalid review Data");
+    } else {
+        next();
+    }
+};
+
 
 //index routev completed
 app.get("/listings",wrapAsync(async(req,res)=>{
@@ -99,7 +112,7 @@ app.delete("/listings/:id",wrapAsync(async(req,res)=>{
 )
 
 //review Post  Route
-app.post("/listings/:id/reviews",async(req,res)=>{
+app.post("/listings/:id/reviews",validateReview,wrapAsync(async(req,res)=>{
     let listing=await Listing.findById(req.params.id);
     let newReview=new Review(req.body.review)
 
@@ -109,10 +122,7 @@ app.post("/listings/:id/reviews",async(req,res)=>{
 
     res.redirect(`/listings/${listing._id}`)
 })
-
-
-
-
+)
 
 // app.get("/testListing",async(req,res)=>{
 //     let sampleListing=new Listing({
