@@ -35,18 +35,19 @@ app.get("/",(req,res)=>{
     res.send("Hii i am Root")
 })
 
-const validateListing=(req,res,next)=>{
-    let {error}=listingSchema.validate(req.body);
-    if(error){
-        let errMsg=error.datails.map((el)=>{
-            el.message.join(",")
-        })
-        throw new ExpressError(400,errMsg)
-    }else{
-        next()
-    }
+const validateListing = (req, res, next) => {
+    const { error } = listingSchema.validate(req.body, { abortEarly: false });
 
-}
+    // Add safety check
+    if (error && error.details) {
+        const errMsg = error.details.map(el => el.message).join(", ");
+        throw new ExpressError(400, errMsg || "Invalid Listing Data");
+    } else if (error) {
+        throw new ExpressError(400, "Invalid Listing Data");
+    } else {
+        next();
+    }
+};
 
 //index routev completed
 app.get("/listings",wrapAsync(async(req,res)=>{
