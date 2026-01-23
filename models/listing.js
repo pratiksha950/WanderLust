@@ -29,6 +29,7 @@ price: {
   reviews:[
     {
       type:Schema.Types.ObjectId,
+       ref: "Review" 
     }
   ]
 });
