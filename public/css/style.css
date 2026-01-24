@@ -57,7 +57,7 @@ body{
     display: flex;
     flex-direction: row !important;
  } */
-.card{
+.listing-card{
     border: none !important;
     margin-bottom: 2rem;
 }
@@ -109,3 +109,6 @@ body{
     padding-left: 0;
     padding-right: 0;
 }
+/* .card{
+    border: 2px solid black !important;
+} */
