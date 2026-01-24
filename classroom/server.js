@@ -5,7 +5,19 @@ const posts =require("./routes/post.js")
 const PORT = 3000;
 const cookieParser=require("cookie-parser")
 
-app.use(cookieParser())
+app.use(cookieParser("secretecose"))
+
+app.get("/getcookies",(req,res)=>{
+    res.cookie("made-in-china","india",{signed:true})
+    res.send("signed cookie send")
+})
+
+app.get("/verify",(req,res)=>{
+  console.log(req.signedCookies);
+  res.send("verified")
+})
+
+
 
 app.get("/getcookies",(req,res)=>{
   res.cookie("greet","hello");
