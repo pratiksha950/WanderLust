@@ -1,19 +1,17 @@
 const express=require("express");
 const app=express();
 const mongoose=require("mongoose");
-const Listing =require("./models/Listing.js");
 const path=require("path");
 const methodOverride=require("method-override");
 const ejsMate=require("ejs-mate");  
-const Review =require("./models/review.js");
 //database  
 const MONGO_URL="mongodb://127.0.0.1:27017/WanderLust";
-const wrapAsync=require("./utils/wrapAsync.js")
 const ExpressError=require("./utils/ExpressError.js")
-const {listingSchema,reviewSchema}=require("./schema.js")//joi
 
-// const router=express.Router;
-const listings=require("./routes/listing.js")
+
+const listings=require("./routes/listing.js") 
+const reviews=require("./routes/review.js")
+
 
 
 main().then(()=>{
@@ -40,56 +38,10 @@ app.get("/",(req,res)=>{
 })
 
 
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body, { abortEarly: false });
-
-    if (error && error.details) {
-        const errMsg = error.details.map(el => el.message).join(", ");
-        throw new ExpressError(400, errMsg || "Invalid review Data");
-    } else if (error) {
-        throw new ExpressError(400, "Invalid review Data");
-    } else {
-        next();
-    }
-};
 
 app.use("/listings",listings)
+app.use("/listings/:id/reviews",reviews)
 
-//review
-//  Post review Route
-app.post("/listings/:id/reviews",validateReview,wrapAsync(async(req,res)=>{
-    let listing=await Listing.findById(req.params.id);
-    let newReview=new Review(req.body.review)
-
-    listing.reviews.push(newReview._id);
-    await newReview.save()
-    await listing.save()
-
-    res.redirect(`/listings/${listing._id}`)
-})
-)
-
-//delete review Route
-app.delete("/listings/:id/reviews/:reviewId",
-    wrapAsync(async(req,res)=>{
-        let {id,reviewId}=req.params;
-        await Listing.findByIdAndUpdate(id,{$pull:{reviews:reviewId}})
-        await Review.findById(reviewId)
-        res.redirect(`/listings/${id}`)
-    }))
-
-// app.get("/testListing",async(req,res)=>{
-//     let sampleListing=new Listing({
-//         title:"My new vila",
-//         description:"By the beach",
-//         price:1200,
-//         location:"alphanche,Goa",
-//         country:"India"
-//     })
-//     await sampleListing.save();
-//     console.log("Sample was save");
-//     res.send("Sucessfull testing")
-// })
 
 app.use((req, res, next) => {
     next(new ExpressError(404, "Page not found"));
