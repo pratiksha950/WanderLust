@@ -40,11 +40,26 @@ router.get("/:id",wrapAsync(async (req,res)=>{
 }))
 
 //create Route
-router.post("/",validateListing, wrapAsync(async (req,res,next)=>{
-    const newListing=new Listing(req.body.listing);
+// router.post("/",validateListing, wrapAsync(async (req,res,next)=>{
+//     const newListing=new Listing(req.body.listing);
+//     await newListing.save();
+//     res.redirect("/listings")
+// }))
+
+router.post("/", validateListing, wrapAsync(async (req, res) => {
+    const newListing = new Listing(req.body.listing);
+
+    if (!newListing.image || !newListing.image.url) {
+        newListing.image = {
+            url: "https://images.unsplash.com/photo-1625505826533-5c80aca7d157?auto=format&fit=crop&w=800&q=60",
+            filename: "listingimage"
+        };
+    }
+
     await newListing.save();
-    res.redirect("/listings")
-}))
+    res.redirect("/listings");
+}));
+
 
 //Edit Route
 router.get("/:id/edit",wrapAsync(async(req,res)=>{
