@@ -17,9 +17,10 @@ router.post("/", (req, res) => {
   res.send("post for rows");
 });
 
-//users delete
-router.get("/:id", (req, res) => {
-  res.send("Hi delete user for id");
+// delete user
+router.delete("/:id", (req, res) => {
+  res.send("delete user for id");
 });
+
 
 module.exports=router;

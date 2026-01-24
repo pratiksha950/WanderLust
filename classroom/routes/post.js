@@ -18,7 +18,8 @@ router.post("/", (req, res) => {
 });
 
 // delete
-router.get("/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
   res.send("Hi delete posts for id");
 });
 
+module.exports = router; 
