@@ -12,8 +12,6 @@ const ExpressError=require("./utils/ExpressError.js")
 const listings=require("./routes/listing.js") 
 const reviews=require("./routes/review.js")
 
-
-
 main().then(()=>{
     console.log("connected to mongoDB");
 }).catch((err)=>{

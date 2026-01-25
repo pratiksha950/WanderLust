@@ -5,21 +5,26 @@ const posts =require("./routes/post.js")
 const PORT = 3000;
 const cookieParser=require("cookie-parser")
 const session=require("express-session")
+const flash=require("connect-flash")
+const path=require("path")
 
+app.set("view engine","ejs");
+app.set("views",path.join(__dirname,"views"));
 
 const sessionOption=(session({secret:"mysupersecretstring",resave:false,saveUninitialized:true}))
 
 app.use(sessionOption);
+app.use(flash())
 
 app.get("/register",(req,res)=>{
   let {name="anonymous"}=req.query;
   req.session.name=name;
-  console.log(req.session.name);
+  req.flash("success","user register successfully")
   res.redirect("/hello")
 })
 
 app.get("/hello",(req,res)=>{
-  res.send(`hello , ${req.session.name}`)
+  res.render("page.ejs",{name:req.session.name,msg:req.flash("success")})
 })
 
 
