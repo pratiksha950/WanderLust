@@ -6,16 +6,31 @@ const PORT = 3000;
 const cookieParser=require("cookie-parser")
 const session=require("express-session")
 
-app.use(session({secret:"mysupersecretstring",resave:false,saveUninitialized:true}))
 
-app.get("/reqcount",(req,res)=>{
-  if(req.session.count){
-    req.session.count++
-  }else{
-    req.session.count=1
-  }
-  res.send(`you send a request ${req.session.count} times `)
+const sessionOption=(session({secret:"mysupersecretstring",resave:false,saveUninitialized:true}))
+
+app.use(sessionOption);
+
+app.get("/register",(req,res)=>{
+  let {name="anonymous"}=req.query;
+  req.session.name=name;
+  console.log(req.session.name);
+  res.redirect("/hello")
 })
+
+app.get("/hello",(req,res)=>{
+  res.send(`hello , ${req.session.name}`)
+})
+
+
+// app.get("/reqcount",(req,res)=>{
+//   if(req.session.count){
+//     req.session.count++
+//   }else{
+//     req.session.count=1
+//   }
+//   res.send(`you send a request ${req.session.count} times `)
+// })
 
 
 
