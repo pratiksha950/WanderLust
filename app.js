@@ -11,6 +11,9 @@ const session=require("express-session")
 const listings=require("./routes/listing.js") 
 const reviews=require("./routes/review.js")
 const flash=require("connect-flash")
+const passport=require("passport")
+const LocalStrategy=require("passport-local")
+const User=require("./models/user.js")
 
 const sessionoptions={
     secret:"mysupersecretcode",
@@ -23,8 +26,6 @@ const sessionoptions={
     }
 }
 
-app.use(session(sessionoptions))
-app.use(flash())
 
 main().then(()=>{
     console.log("connected to mongoDB");
@@ -49,10 +50,29 @@ app.get("/",(req,res)=>{
     res.send("Hii i am Root")
 })
 
+app.use(session(sessionoptions))
+app.use(flash())
+
+app.use(passport.initialize())
+app.use(passport.session())
+passport.use(new LocalStrategy(User.authenticate()))
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success")
     res.locals.error=req.flash("error")
     next()
+})
+
+app.get("/demouser",async(req,res)=>{
+    let fakeUser=new User({
+        email:"salunke@2005",
+        username:"pratiksha"
+    })
+    let registeredUser=await User.register(fakeUser,"pass@123")
+    res.send(registeredUser)
 })
 
 app.use("/listings",listings)
