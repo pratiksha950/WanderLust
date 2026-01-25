@@ -7,10 +7,17 @@ const ejsMate=require("ejs-mate");
 //database  
 const MONGO_URL="mongodb://127.0.0.1:27017/WanderLust";
 const ExpressError=require("./utils/ExpressError.js")
-
-
+const session=require("express-session")
 const listings=require("./routes/listing.js") 
 const reviews=require("./routes/review.js")
+
+const sessionoptions={
+    secret:"mysupersecretcode",
+    resave:false,
+    saveUninitialized:true
+}
+
+app.use(session(sessionoptions))
 
 main().then(()=>{
     console.log("connected to mongoDB");
