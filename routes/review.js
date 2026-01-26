@@ -8,7 +8,6 @@ const Listing =require("../models/Listing.js");
 
 
 
-
 //review
 //  Post review Route
 router.post("/",isLoggedIn,validateReview,wrapAsync(async(req,res)=>{

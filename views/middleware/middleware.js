@@ -1,9 +1,8 @@
 const Listing = require("../../models/Listing.js");
 const { listingSchema } = require("../../schema.js");
 const ExpressError = require("../../utils/ExpressError.js");
-const {reviewSchema}=require("../../schema.js")//joi
+const {reviewSchema}=require("../../schema.js")
 const Review = require("../../models/review.js");
-
 
 const isLoggedIn = (req, res, next) => {
     if (!req.isAuthenticated()) {
@@ -29,7 +28,7 @@ const isOwner=async(req,res,next)=>{
     req.flash("error", "You are not owner of this listing !!!");
     return res.redirect(`/listings/${id}`);
     }
-    next()
+    next();
 }
 
 const validateListing = (req, res, next) => {
@@ -66,8 +65,6 @@ const isReviewAuthor=async(req,res,next)=>{
     req.flash("error", "You are not author of this review !!!");
     return res.redirect(`/listings/${id}`);
     }
-    next()
+    next();
 }
-
-
 module.exports = { isLoggedIn, saveRedirectUrl,isOwner,validateListing,validateReview,isReviewAuthor};
