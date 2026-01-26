@@ -4,7 +4,7 @@ const wrapAsync=require("../utils/wrapAsync.js")
 const {listingSchema}=require("../schema.js")//joi
 const ExpressError=require("../utils/ExpressError.js")
 const Listing =require("../models/Listing.js");
-const isLoggedIn =require("../views/middleware/middleware.js")
+const {isLoggedIn} =require("../views/middleware/middleware.js")
 
 
 
