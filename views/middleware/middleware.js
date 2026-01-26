@@ -2,7 +2,7 @@ const Listing = require("../../models/Listing.js");
 const { listingSchema } = require("../../schema.js");
 const ExpressError = require("../../utils/ExpressError.js");
 const {reviewSchema}=require("../../schema.js")//joi
-
+const Review = require("../../models/review.js");
 
 
 const isLoggedIn = (req, res, next) => {
@@ -58,6 +58,16 @@ const validateReview = (req, res, next) => {
     }
 };
 
+const isReviewAuthor=async(req,res,next)=>{
+        let {id,reviewId}=req.params;
+    let review = await Review.findById(reviewId);
+
+    if (!review.author.equals(req.user._id)) {
+    req.flash("error", "You are not author of this review !!!");
+    return res.redirect(`/listings/${id}`);
+    }
+    next()
+}
 
 
-module.exports = { isLoggedIn, saveRedirectUrl,isOwner,validateListing,validateReview};
+module.exports = { isLoggedIn, saveRedirectUrl,isOwner,validateListing,validateReview,isReviewAuthor};
