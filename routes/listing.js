@@ -1,25 +1,9 @@
 const express = require("express");
 const router=express.Router()
 const wrapAsync=require("../utils/wrapAsync.js")
-const {listingSchema}=require("../schema.js")//joi
-const ExpressError=require("../utils/ExpressError.js")
 const Listing =require("../models/Listing.js");
-const {isLoggedIn} =require("../views/middleware/middleware.js")
+const {isLoggedIn,isOwner,validateListing} =require("../views/middleware/middleware.js")
 
-
-
-const validateListing = (req, res, next) => {
-    const { error } = listingSchema.validate(req.body, { abortEarly: false });
-
-    if (error && error.details) {
-        const errMsg = error.details.map(el => el.message).join(", ");
-        throw new ExpressError(400, errMsg || "Invalid Listing  Data");
-    } else if (error) {
-        throw new ExpressError(400, "Invalid Listing Data");
-    } else {
-        next();
-    }
-};
 
 
 //index routev completed
@@ -64,7 +48,7 @@ router.post("/", validateListing,isLoggedIn, wrapAsync(async (req, res) => {
 
 
 //Edit Route
-router.get("/:id/edit",isLoggedIn,wrapAsync(async(req,res)=>{
+router.get("/:id/edit",isLoggedIn,isOwner,wrapAsync(async(req,res)=>{
     let {id}=req.params;
     const listing=await Listing.findById(id);
         if(!listing){
@@ -75,7 +59,7 @@ router.get("/:id/edit",isLoggedIn,wrapAsync(async(req,res)=>{
 }))
 
 //update Route
-router.put("/:id",validateListing,isLoggedIn,wrapAsync(async(req,res)=>{
+router.put("/:id",validateListing,isLoggedIn,isOwner,wrapAsync(async(req,res)=>{
     let {id}=req.params;
     await Listing.findByIdAndUpdate(id,{...req.body.listing})
     req.flash("success","Listing Updated !!!")
@@ -83,14 +67,12 @@ router.put("/:id",validateListing,isLoggedIn,wrapAsync(async(req,res)=>{
 }))
 
 //DELETE Route
-router.delete("/:id",isLoggedIn,wrapAsync(async(req,res)=>{
+router.delete("/:id",isLoggedIn,isOwner,wrapAsync(async(req,res)=>{
     let {id}=req.params;
     let deletedListing=await Listing.findByIdAndDelete(id);
     req.flash("success","listing deleted")
     res.redirect("/listings")
 })
 )
-
-
 
 module.exports=router;

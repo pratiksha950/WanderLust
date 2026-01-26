@@ -1,23 +1,11 @@
 const express = require("express");
 const router=express.Router({mergeParams:true})
 const wrapAsync=require("../utils/wrapAsync.js")
-const ExpressError=require("../utils/ExpressError.js")
+
 const Review =require("../models/review.js");
-const {reviewSchema}=require("../schema.js")//joi
+const {validateReview } =require("../views/middleware/middleware.js")
 const Listing =require("../models/Listing.js");
 
-const validateReview = (req, res, next) => {
-    const { error } = reviewSchema.validate(req.body, { abortEarly: false });
-
-    if (error && error.details) {
-        const errMsg = error.details.map(el => el.message).join(", ");
-        throw new ExpressError(400, errMsg || "Invalid review Data");
-    } else if (error) {
-        throw new ExpressError(400, "Invalid review Data");
-    } else {
-        next();
-    }
-};
 
 
 //review
