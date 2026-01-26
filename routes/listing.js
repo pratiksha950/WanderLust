@@ -6,28 +6,23 @@ const {isLoggedIn,isOwner,validateListing} =require("../views/middleware/middlew
 
 const ListingController=require("../controllers/listing.js")
 
+//create Route and index route
+router
+.route("/")
+.get(wrapAsync(ListingController.index))
+.post(validateListing,isLoggedIn, wrapAsync(ListingController.createListing))
 
-//index route completed
-router.get("/",wrapAsync(ListingController.index));
-
-//new route
+//new route 
 router.get("/new",isLoggedIn,ListingController.renderNewForm)
 
-//show route
-router.get("/:id",wrapAsync(ListingController.showListing))
-
-//create Route
-router.post("/", validateListing,isLoggedIn, wrapAsync(ListingController.createListing));
-
+//show route ,update Route and DELETE Route
+router
+.route("/:id")
+.get(wrapAsync(ListingController.showListing))
+.put(validateListing,isLoggedIn,isOwner,wrapAsync(ListingController.updateListing))
+.delete(isLoggedIn,isOwner,wrapAsync(ListingController.deleteListing))
 
 //Edit Route
 router.get("/:id/edit",isLoggedIn,isOwner,wrapAsync(ListingController.renderEditForm))
-
-//update Route
-router.put("/:id",validateListing,isLoggedIn,isOwner,wrapAsync(ListingController.updateListing))
-
-//DELETE Route
-router.delete("/:id",isLoggedIn,isOwner,wrapAsync(ListingController.deleteListing)
-)
 
 module.exports=router;
