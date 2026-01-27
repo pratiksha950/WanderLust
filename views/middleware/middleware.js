@@ -67,4 +67,9 @@ const isReviewAuthor=async(req,res,next)=>{
     }
     next();
 }
-module.exports = { isLoggedIn, saveRedirectUrl,isOwner,validateListing,validateReview,isReviewAuthor};
+
+const createListing = async (req, res) => {
+    res.send("working");
+};
+
+module.exports = { isLoggedIn, saveRedirectUrl,isOwner,validateListing,validateReview,isReviewAuthor,createListing};

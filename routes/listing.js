@@ -2,7 +2,9 @@ const express = require("express");
 const router=express.Router()
 const wrapAsync=require("../utils/wrapAsync.js")
 const Listing =require("../models/listing.js");
-const {isLoggedIn,isOwner,validateListing} =require("../views/middleware/middleware.js")
+const {isLoggedIn,isOwner,validateListing,createListing} =require("../views/middleware/middleware.js")
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
 const ListingController=require("../controllers/listing.js")
 
@@ -10,7 +12,13 @@ const ListingController=require("../controllers/listing.js")
 router
 .route("/")
 .get(wrapAsync(ListingController.index))
-.post(validateListing,isLoggedIn, wrapAsync(ListingController.createListing))
+// .post(validateListing,isLoggedIn, wrapAsync(ListingController.createListing))
+.post(
+  isLoggedIn,
+  upload.single("image"),
+  wrapAsync(ListingController.createListing)
+);
+
 
 //new route 
 router.get("/new",isLoggedIn,ListingController.renderNewForm)
