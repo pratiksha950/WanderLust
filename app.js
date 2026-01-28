@@ -17,6 +17,7 @@ const ExpressError = require("./utils/ExpressError.js");
 
 // session / auth
 const session = require("express-session");
+const MongoStore = require('connect-mongo').default;;
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -56,8 +57,20 @@ app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
 /* ================= SESSION ================= */
+const store=MongoStore.create({
+    mongoUrl:dbUrl,
+    crypto:{
+        secret:"mysupersecretcode"
+    },
+    touchAfter:24*3600,
+})
+
+store.on("error",(err)=>{
+    console.log("error in mongo session store",err);
+})
 
 const sessionoptions = {
+    store,
     secret: "mysupersecretcode",
     resave: false,
     saveUninitialized: false, 
@@ -94,6 +107,7 @@ app.use((req, res, next) => {
 // app.get("/", (req, res) => {
 //     res.send("Hii i am Root");
 // });
+
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
