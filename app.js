@@ -90,9 +90,9 @@ app.use((req, res, next) => {
 
 /* ================= ROUTES ================= */
 
-app.get("/", (req, res) => {
-    res.send("Hii i am Root");
-});
+// app.get("/", (req, res) => {
+//     res.send("Hii i am Root");
+// });
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
