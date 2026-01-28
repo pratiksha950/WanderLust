@@ -9,7 +9,8 @@ const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 
 // database
-const MONGO_URL = "mongodb://127.0.0.1:27017/WanderLust";
+// const MONGO_URL = "mongodb://127.0.0.1:27017/WanderLust";
+const dbUrl=process.env.ATLASDB_URL
 
 // utils
 const ExpressError = require("./utils/ExpressError.js");
@@ -33,7 +34,7 @@ main()
     .catch(err => console.log(err));
 
 async function main() {
-    await mongoose.connect(MONGO_URL);
+    await mongoose.connect(dbUrl);
 }
 
 /* ================= VIEW ENGINE ================= */
